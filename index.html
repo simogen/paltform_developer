@@ -248,13 +248,13 @@ body { -webkit-text-size-adjust: 100%; }
     <div class="reset-wrap" id="reset-wrap">
       <button class="btn btn-d btn-sm" onclick="toggleResetMenu(event)">🗑 リセット ▾</button>
       <div class="reset-menu" id="reset-menu">
-        <button class="reset-item danger" onclick="event.stopPropagation(); clrAnswers()">📊 回答記録をリセット<br><small style="color:var(--text3);font-weight:400">正解数・不正解数を初期化</small></button>
+        <button class="reset-item danger" onclick="clrAnswers()">📊 回答記録をリセット<br><small style="color:var(--text3);font-weight:400">正解数・不正解数を初期化</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item danger" onclick="event.stopPropagation(); clrChecks()">☑ チェックをすべて解除<br><small style="color:var(--text3);font-weight:400">付けたチェックを全て削除</small></button>
+        <button class="reset-item danger" onclick="clrChecks()">☑ チェックをすべて解除<br><small style="color:var(--text3);font-weight:400">付けたチェックを全て削除</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item danger" onclick="event.stopPropagation(); clrSession()">🔄 選択肢の表示をリセット<br><small style="color:var(--text3);font-weight:400">前回選んだ選択肢の色を消す</small></button>
+        <button class="reset-item danger" onclick="clrSession()">🔄 選択肢の表示をリセット<br><small style="color:var(--text3);font-weight:400">前回選んだ選択肢の色を消す</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item" onclick="event.stopPropagation(); closeResetMenu()">キャンセル</button>
+        <button class="reset-item" onclick="closeResetMenu()">キャンセル</button>
       </div>
     </div>
   </div>
