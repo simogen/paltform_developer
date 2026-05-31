@@ -246,15 +246,15 @@ body { -webkit-text-size-adjust: 100%; }
     <button class="btn btn-g btn-sm" onclick="expJSON()">⬇ JSON</button>
     <button class="btn btn-g btn-sm" onclick="expCSV()">⬇ CSV</button>
     <div class="reset-wrap" id="reset-wrap">
-      <button class="btn btn-d btn-sm" onclick="toggleResetMenu()">🗑 リセット ▾</button>
+      <button class="btn btn-d btn-sm" onclick="toggleResetMenu(event)">🗑 リセット ▾</button>
       <div class="reset-menu" id="reset-menu">
-        <button class="reset-item danger" onclick="clrAnswers()">📊 回答記録をリセット<br><small style="color:var(--text3);font-weight:400">正解数・不正解数を初期化</small></button>
+        <button class="reset-item danger" onclick="event.stopPropagation(); clrAnswers()">📊 回答記録をリセット<br><small style="color:var(--text3);font-weight:400">正解数・不正解数を初期化</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item danger" onclick="clrChecks()">☑ チェックをすべて解除<br><small style="color:var(--text3);font-weight:400">付けたチェックを全て削除</small></button>
+        <button class="reset-item danger" onclick="event.stopPropagation(); clrChecks()">☑ チェックをすべて解除<br><small style="color:var(--text3);font-weight:400">付けたチェックを全て削除</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item danger" onclick="clrSession()">🔄 選択肢の表示をリセット<br><small style="color:var(--text3);font-weight:400">前回選んだ選択肢の色を消す</small></button>
+        <button class="reset-item danger" onclick="event.stopPropagation(); clrSession()">🔄 選択肢の表示をリセット<br><small style="color:var(--text3);font-weight:400">前回選んだ選択肢の色を消す</small></button>
         <div class="reset-divider"></div>
-        <button class="reset-item" onclick="closeResetMenu()">キャンセル</button>
+        <button class="reset-item" onclick="event.stopPropagation(); closeResetMenu()">キャンセル</button>
       </div>
     </div>
   </div>
@@ -371,7 +371,7 @@ function recalc() {
   document.getElementById('s-ng').textContent = s.ng;
   document.getElementById('s-pct').textContent = s.done ? Math.round(s.ok/(s.ok+s.ng)*100)+'%' : '—';
   document.getElementById('s-check').textContent = Object.keys(checks).length;
-  document.getElementById('pbf').style.width = (cur / QDATAS.length * 100) + '%';
+  document.getElementById('pbf').style.width = (order.length > 0 ? (idx + 1) / order.length * 100 : 0) + '%';
   const qsel = document.getElementById('qsel'); if(qsel) qsel.value = cur;
 }
 
@@ -399,7 +399,7 @@ function setCat(c) {
   cat = c; buildCats();
   order = c === 'all' ? QDATAS.map(q=>q.id) : QDATAS.filter(q=>q.category===c).map(q=>q.id);
   if(!order.length) { document.getElementById('qa').innerHTML='<div class="empty"><span class="ei">🔍</span>該当なし</div>'; return; }
-  idx = 0; buildSel(); showQ(order[0]);
+  idx = 0; cur = order[0]; buildSel(); showQ(order[0]);
 }
 
 // ===== TABS =====
@@ -570,7 +570,8 @@ function doAns(num, sel, containerId) {
     showQ(num, containerId);
   } else {
     // 単一選択: 即確定
-    const ok = sel === d.answer;
+    const correctArr = Array.isArray(d.answer) ? d.answer : [d.answer];
+    const ok = correctArr.includes(sel);
     sessionAnswers[num] = sel;
     if(!stats_rec[num]) stats_rec[num] = {correct:0, wrong:0};
     if(ok) stats_rec[num].correct++;
@@ -596,7 +597,7 @@ function commitMulti(num, containerId) {
 
 function prevQ() { if(idx>0){idx--;showQ(order[idx])} }
 function nextQ() { if(idx<order.length-1){idx++;showQ(order[idx])}else toast('最後の問題です') }
-function jumpTo(n) { cur=n; idx=order.indexOf(n); if(idx<0){order=QDATAS.map(q=>q.id);idx=n-1} showQ(n); }
+function jumpTo(n) { cur=n; idx=order.indexOf(n); if(idx<0){ order=QDATAS.map(q=>q.id); idx=order.indexOf(n); } showQ(n); }
 function rndQ() { const n=order[Math.floor(Math.random()*order.length)]; idx=order.indexOf(n); showQ(n); }
 
 // ===== LIST =====
@@ -739,7 +740,8 @@ function exitCheckedPractice() {
 }
 
 // ===== RESET MENU =====
-function toggleResetMenu() {
+function toggleResetMenu(e) {
+  if(e) e.stopPropagation();
   const m = document.getElementById('reset-menu');
   m.classList.toggle('open');
 }
